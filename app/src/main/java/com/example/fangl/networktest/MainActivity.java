@@ -14,6 +14,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private Button button;
     private TextView textView;
@@ -31,7 +37,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
 
             case R.id.send_request:
-                sendRequestWithHttpUrlConnection();
+//                sendRequestWithHttpUrlConnection();
+                sendRequestWithOkHttp();
                 break;
             default:
 
@@ -88,6 +95,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 textView.setText(response);
             }
         });
+    }
+
+    private void sendRequestWithOkHttp(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OkHttpClient client = new OkHttpClient();
+                // 如果是post,需要创建一个requestBody对象
+             /*   RequestBody requestBody = new FormBody.Builder()
+                        .add("id","12345")
+                        .add("name","hello")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("http://rmis.ideasoft.net.cn:7073/home/api")
+                        .post(requestBody)
+                        .build();*/
+
+                Request request = new Request.Builder()
+                        .url("http://rmis.ideasoft.net.cn:7073/home/api")
+                        .build();
+                try {
+                   Response response =  client.newCall(request).execute();
+                   String responseData = response.body().string();
+                   showResponseText(responseData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
+
     }
 
 
